@@ -120,10 +120,14 @@ def pose_callback(msg):
     # управленияе взависимости от угла отклонения текущего
     # курса от курса на пересечение
     bearing = calc_bearing(msg_helpers.point_to_array(position), orientation, msg_helpers.point_to_array(intersection))
-    rot = P_COEF * bearing
+    
 
-    if abs(rot) > 1:
-        rot = math.copysign(1, rot)
+    MAX_BEARING = pi/2
+    rot = bearing
+    if abs(rot) > MAX_BEARING:
+        rot = math.copysign(MAX_BEARING, rot)
+    rot /= MAX_BEARING
+    rot *= P_COEF
 
     rospy.loginfo('bearing=%f, rot=%f', bearing / math.pi * 180, rot)
 
